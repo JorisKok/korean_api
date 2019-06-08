@@ -1,6 +1,5 @@
 import Config
 
-
 config :korean_api,
   postgrest_url: "http://localhost:3000"
 

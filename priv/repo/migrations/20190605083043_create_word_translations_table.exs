@@ -5,6 +5,7 @@ defmodule KoreanApi.Repo.Migrations.CreateWordTranslationsTable do
     create table(:word_translations) do
       add :word_id, references(:words)
       add :translation, :string
+      add :definition, :string
     end
   end
 

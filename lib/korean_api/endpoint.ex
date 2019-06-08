@@ -33,5 +33,6 @@ defmodule KoreanApi.Endpoint do
   end
 
   # Forward everything to PostgREST
-  forward("/", to: ReverseProxyPlug, upstream: Application.fetch_env!(:korean_api, :postgrest_url))  # TODO get url from config
+  # TODO get url from config
+  forward("/", to: ReverseProxyPlug, upstream: Application.fetch_env!(:korean_api, :postgrest_url))
 end
