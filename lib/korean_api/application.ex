@@ -9,7 +9,8 @@ defmodule KoreanApi.Application do
     children = [
       # Starts a worker by calling: KoreanApi.Worker.start_link(arg)
       # {KoreanApi.Worker, arg}
-      Plug.Cowboy.child_spec(scheme: :http, plug: KoreanApi.Endpoint, options: [port: 4001])
+      KoreanApi.Repo,
+      Plug.Cowboy.child_spec(scheme: :http, plug: KoreanApi.Endpoint, options: [port: 4001]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

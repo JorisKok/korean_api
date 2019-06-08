@@ -23,5 +23,6 @@ erl_crash.dump
 korean_api-*.tar
 
 /config/prod.exs
+/config/dev.exs
 
 .idea/

@@ -16,16 +16,22 @@ defmodule KoreanApi.Endpoint do
     send_resp(conn, 200, "pong!")
   end
 
-  @shortdoc "The Open API docs are not properly forwarded via the ReverseProxyPlug"
+  # The Open API docs are not properly forwarded via the ReverseProxyPlug
   get "/" do
-    HTTPoison.start
-    response = HTTPoison.get! "http://localhost:3000"
+    HTTPoison.start()
+    response = HTTPoison.get!(Application.fetch_env!(:korean_api, :postgrest_url))
 
     conn
     |> put_resp_content_type("application/openapi+json")
     |> send_resp(200, response.body)
   end
 
-  @shortdoc "Forward everything to PostgREST"
-  forward("/", to: ReverseProxyPlug, upstream: "//0.0.0.0:3000/")
+  get "/words" do
+    conn
+    |> put_resp_content_type("application/openapi+json")
+    |> send_resp(200, KoreanApi.Controllers.WordController.get(conn.query_string))
+  end
+
+  # Forward everything to PostgREST
+  forward("/", to: ReverseProxyPlug, upstream: Application.fetch_env!(:korean_api, :postgrest_url))  # TODO get url from config
 end
