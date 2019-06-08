@@ -1,4 +1,7 @@
 defmodule KoreanApi.Models.Word do
+  @moduledoc """
+  The base word
+  """
   use Ecto.Schema
 
   schema "words" do

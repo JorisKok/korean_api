@@ -17,6 +17,7 @@
   "idna": {:hex, :idna, "6.0.0", "689c46cbcdf3524c44d5f3dde8001f364cd7608a99556d8fbd8239a5798d4c10", [:rebar3], [{:unicode_util_compat, "0.4.1", [hex: :unicode_util_compat, repo: "hexpm", optional: false]}], "hexpm"},
   "jason": {:hex, :jason, "1.1.2", "b03dedea67a99223a2eaf9f1264ce37154564de899fd3d8b9a21b1a6fd64afe7", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm"},
   "korean_dictionary": {:hex, :korean_dictionary, "0.1.2", "8fb04f6ebff5e220225ae1826fbab80f2ed505c6b8f508c7ae8ae79d5bfe2e68", [:mix], [{:exml, "~> 0.1.1", [hex: :exml, repo: "hexpm", optional: false]}, {:httpoison, "~> 1.5.1", [hex: :httpoison, repo: "hexpm", optional: false]}], "hexpm"},
+  "korean_sentence_analyser": {:hex, :korean_sentence_analyser, "0.1.1", "0d95ec0cacb1785a8837889935e485c0b645cbe1622d9692c32a8f2c5d4a2741", [:mix], [{:httpoison, "~> 1.4", [hex: :httpoison, repo: "hexpm", optional: false]}, {:jason, "~> 1.1", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm"},
   "makeup": {:hex, :makeup, "0.8.0", "9cf32aea71c7fe0a4b2e9246c2c4978f9070257e5c9ce6d4a28ec450a839b55f", [:mix], [{:nimble_parsec, "~> 0.5.0", [hex: :nimble_parsec, repo: "hexpm", optional: false]}], "hexpm"},
   "makeup_elixir": {:hex, :makeup_elixir, "0.13.0", "be7a477997dcac2e48a9d695ec730b2d22418292675c75aa2d34ba0909dcdeda", [:mix], [{:makeup, "~> 0.8", [hex: :makeup, repo: "hexpm", optional: false]}], "hexpm"},
   "metrics": {:hex, :metrics, "1.0.1", "25f094dea2cda98213cecc3aeff09e940299d950904393b2a29d191c346a8486", [:rebar3], [], "hexpm"},

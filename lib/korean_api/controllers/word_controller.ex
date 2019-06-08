@@ -2,11 +2,9 @@ defmodule KoreanApi.Controllers.WordController do
   @moduledoc """
   The Korean word endpoints
   """
+  alias KoreanApi.Services.KoreanDictionaryService
   alias KoreanApi.Repo
   alias KoreanApi.Models.Word
-  alias KoreanApi.Models.WordTranslation
-  alias KoreanApi.Models.WordExampleSentence
-  alias KoreanApi.Models.WordKoreanExplanation
 
   @doc """
   Get the word from the database
@@ -16,11 +14,12 @@ defmodule KoreanApi.Controllers.WordController do
   def get("korean=eq." <> parameters) do
     parameters = String.split(parameters, "&")
     word = URI.decode(hd(parameters))
-    other_parameters = tl(parameters) # We need to pass these along to get access to selects, filters etc
+    # We need to pass these along to get access to selects, filters etc
+    other_parameters = tl(parameters)
 
     with :not_found <- get_from_database(word, other_parameters),
-         :not_found <- get_from_krdict(word, other_parameters) do
-      # TODO analyse + get from database
+         :not_found <- get_from_krdict(word, other_parameters),
+         :not_found <- get_from_analysed(word, other_parameters) do
       []
     end
   end
@@ -39,7 +38,7 @@ defmodule KoreanApi.Controllers.WordController do
 
     case HTTPoison.get!(
            Application.fetch_env!(:korean_api, :postgrest_url) <>
-           "/words?korean=eq." <> URI.encode(word) <> "&" <> Enum.join(other_parameters, "&")
+             "/words?korean=eq." <> URI.encode(word) <> "&" <> Enum.join(other_parameters, "&")
          ).body do
       "[]" ->
         :not_found
@@ -50,55 +49,32 @@ defmodule KoreanApi.Controllers.WordController do
   end
 
   defp get_from_krdict(korean, other_parameters) when is_list(other_parameters) do
-    # Store the word
-    {:ok, word} = Repo.insert(%Word{korean: korean})
-
-    # Store the definitions and translations
-    case KoreanDictionary.korean_to_english(korean) do
-      [] ->
-        :not_found
-
-      result ->
-        Enum.each(
-          result,
-          fn {translation, definition} ->
-            Repo.insert!(%WordTranslation{word_id: word.id, translation: translation, definition: definition})
-          end
-        )
+    with {:ok, word} <- KoreanDictionaryService.korean_to_english(korean),
+         :ok <- KoreanDictionaryService.korean_to_korean(korean, word),
+         :ok <- KoreanDictionaryService.korean_example_sentences(korean, word) do
+      # Get it from the database, so we can use the PostgREST queries
+      get_from_database(korean, other_parameters)
     end
+  end
 
-    # Store the example sentences
-    case KoreanDictionary.korean_to_korean(korean) do
-      [] ->
-        :not_found
-
-      result when is_list(result) ->
-        Enum.each(
-          result,
-          fn korean_explanation ->
-            Repo.insert!(%WordKoreanExplanation{word_id: word.id, korean_explanation: korean_explanation})
-          end
-        )
-      korean_explanation ->
-        Repo.insert!(%WordKoreanExplanation{word_id: word.id, korean_explanation: korean_explanation})
+  defp get_from_krdict_by_analysed(korean, word, other_parameters) when is_list(other_parameters) do
+    with {:ok, _} <- KoreanDictionaryService.korean_to_english(korean, word),
+         :ok <- KoreanDictionaryService.korean_to_korean(korean, word),
+         :ok <- KoreanDictionaryService.korean_example_sentences(korean, word) do
+      # Get it from the database, so we can use the PostgREST queries
+      get_from_database(korean, other_parameters)
     end
+  end
 
-    # Store the korean explanations
-    case KoreanDictionary.korean_example_sentences(korean) do
-      [] ->
-        :not_found
+  defp get_from_analysed(korean, other_parameters) when is_list(other_parameters) do
+    stem = KoreanSentenceAnalyser.get_the_stem_of_a_word(korean)
+    case get_from_database(stem, other_parameters) do
+      :not_found ->
+        # Save based on the searched value, so that it's fast to receive the next time
+        {:ok, word} = Repo.insert(%Word{korean: stem})
 
-      result when is_list(result) ->
-        Enum.each(
-          result,
-          fn example_sentence ->
-            Repo.insert!(%WordExampleSentence{word_id: word.id, example_sentence: example_sentence})
-          end
-        )
-        example_sentence -> Repo.insert!(%WordExampleSentence{word_id: word.id, example_sentence: example_sentence})
+        get_from_krdict_by_analysed(stem, word, other_parameters)
+      result -> result
     end
-
-    # Get it from the database
-    get_from_database(korean, other_parameters)
   end
 end

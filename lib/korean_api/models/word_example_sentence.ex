@@ -1,4 +1,7 @@
 defmodule KoreanApi.Models.WordExampleSentence do
+  @moduledoc """
+  The example sentences
+  """
   use Ecto.Schema
 
   schema "word_example_sentences" do
