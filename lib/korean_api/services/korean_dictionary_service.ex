@@ -18,19 +18,24 @@ defmodule KoreanApi.Services.KoreanDictionaryService do
         :not_found
 
       result ->
-        if word == nil do
-          # Insert the word only when we found a translation
-          {:ok, word} = Repo.insert(%Word{korean: korean})
+        word = case word do
+          nil ->
+            # Insert the word only when we found a translation
+            {:ok, word} = Repo.insert(%Word{korean: korean})
+            word
+          word -> word
         end
 
         Enum.each(
           result,
           fn {translation, definition} ->
-            Repo.insert!(%WordTranslation{
-              word_id: word.id,
-              translation: translation,
-              definition: definition
-            })
+            Repo.insert!(
+              %WordTranslation{
+                word_id: word.id,
+                translation: translation,
+                definition: definition
+              }
+            )
           end
         )
 
@@ -51,20 +56,24 @@ defmodule KoreanApi.Services.KoreanDictionaryService do
         Enum.each(
           result,
           fn korean_explanation ->
-            Repo.insert!(%WordKoreanExplanation{
-              word_id: word.id,
-              korean_explanation: korean_explanation
-            })
+            Repo.insert!(
+              %WordKoreanExplanation{
+                word_id: word.id,
+                korean_explanation: korean_explanation
+              }
+            )
           end
         )
 
         :ok
 
       korean_explanation ->
-        Repo.insert!(%WordKoreanExplanation{
-          word_id: word.id,
-          korean_explanation: korean_explanation
-        })
+        Repo.insert!(
+          %WordKoreanExplanation{
+            word_id: word.id,
+            korean_explanation: korean_explanation
+          }
+        )
 
         :ok
     end
@@ -83,10 +92,12 @@ defmodule KoreanApi.Services.KoreanDictionaryService do
         Enum.each(
           result,
           fn example_sentence ->
-            Repo.insert!(%WordExampleSentence{
-              word_id: word.id,
-              example_sentence: example_sentence
-            })
+            Repo.insert!(
+              %WordExampleSentence{
+                word_id: word.id,
+                example_sentence: example_sentence
+              }
+            )
           end
         )
 
