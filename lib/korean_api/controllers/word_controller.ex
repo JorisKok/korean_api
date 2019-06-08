@@ -29,7 +29,6 @@ defmodule KoreanApi.Controllers.WordController do
   Anything that is not a GET for a specific word, we just forward to PostgREST
   """
   def get(query_string) do
-    IO.inspect query_string
     with :not_found <- get_from_database(query_string) do
       []
     end
@@ -56,7 +55,6 @@ defmodule KoreanApi.Controllers.WordController do
         {:ok, word} = Repo.insert(%Word{korean: word})
 
         # Store the definitions and translations
-        IO.inspect result
         Enum.each(
           result,
           fn {translation, definition} ->
