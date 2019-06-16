@@ -1,0 +1,14 @@
+defmodule KoreanApi.Models.Word do
+  @moduledoc """
+  The base word
+  """
+  use Ecto.Schema
+
+  schema "words" do
+    field(:email, :string)
+    field(:password, :string)
+    has_many(:word_translations, KoreanApi.Models.WordTranslation)
+    has_many(:word_example_sentences, KoreanApi.Models.WordExampleSentence)
+    has_many(:word_korean_explanations, KoreanApi.Models.WordKoreanExplanation)
+  end
+end

@@ -4,7 +4,7 @@ defmodule Mix.Tasks.CreateAnonymousRole do
   """
   use Mix.Task
 
-  @shortdoc "Create the database roles"
+  @shortdoc "Create the anonymous role"
   def run(_) do
     [:postgrex, :ecto, :ecto_sql]
     |> Enum.each(&Application.ensure_all_started/1)

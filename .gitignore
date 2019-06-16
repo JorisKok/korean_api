@@ -22,6 +22,8 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 korean_api-*.tar
 
+.env
+
 /config/prod.exs
 /config/dev.exs
 
