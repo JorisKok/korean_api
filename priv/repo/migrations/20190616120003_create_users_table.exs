@@ -2,45 +2,60 @@ defmodule KoreanApi.Repo.Migrations.CreateUsersTable do
   use Ecto.Migration
 
   def up do
-    create table(:users) do
-      add :email, :string
-      add :password, :string
+    create table(:roles, prefix: "auth") do
+      add :name, :string
     end
 
-    execute("create extension pgcrypto;")
+    create table(:users, prefix: "auth") do
+      add :email, :string
+      add :password, :string
+      add :token, :string
+      add :role_id, references(:roles)
+    end
+
+    create unique_index(:users, [:email], prefix: "auth")
+
+    execute("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
+    execute("alter extension pgcrypto set schema auth;")
+
     execute(
       """
       CREATE OR REPLACE FUNCTION set_password() RETURNS trigger AS $$
       BEGIN
           IF tg_op = 'INSERT' OR tg_op = 'UPDATE' THEN
-              NEW.password = digest(NEW.password, 'sha256');
+              NEW.password = crypt(new.password, gen_salt('bf'));
               RETURN NEW;
           END IF;
       END;
       $$ LANGUAGE plpgsql;
       """
     )
+
     execute(
       """
       CREATE TRIGGER user_password_insert
-      BEFORE INSERT ON users
+      BEFORE INSERT ON auth.users
       FOR EACH ROW
       EXECUTE PROCEDURE set_password();
       """
     )
+
     execute(
       """
       CREATE TRIGGER user_password_update
-      BEFORE UPDATE ON users
+      BEFORE UPDATE ON auth.users
       FOR EACH ROW
       WHEN ( NEW.password IS DISTINCT FROM OLD.password )
       EXECUTE PROCEDURE set_password();
       """
     )
+
   end
 
   def down do
-    drop table(:users)
-    execute("DROP FUNCTION set_password;")
+    drop table(:users, prefix: "auth")
+    drop table(:roles, prefix: "auth")
+    execute("DROP FUNCTION auth.set_password;")
+
   end
 end

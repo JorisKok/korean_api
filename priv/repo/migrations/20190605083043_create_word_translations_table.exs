@@ -7,6 +7,8 @@ defmodule KoreanApi.Repo.Migrations.CreateWordTranslationsTable do
       add :translation, :string
       add :definition, :string
     end
+
+    execute("grant select on word_translations to web_anon;")
   end
 
   def down do

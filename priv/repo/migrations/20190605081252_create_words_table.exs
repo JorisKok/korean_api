@@ -7,6 +7,8 @@ defmodule KoreanApi.Repo.Migrations.CreateWordsTable do
     end
 
     create unique_index(:words, [:korean])
+
+    execute("grant select on words to web_anon;")
   end
 
   def down do

@@ -6,6 +6,8 @@ defmodule KoreanApi.Repo.Migrations.CreateWordExampleSentencesTable do
       add :word_id, references(:words)
       add :example_sentence, :string
     end
+
+    execute("grant select on word_example_sentences to web_anon;")
   end
 
   def down do

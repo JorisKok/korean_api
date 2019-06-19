@@ -17,7 +17,8 @@ defmodule Mix.Tasks.CreateAnonymousRole do
       "grant select on words to web_anon;",
       "grant select on word_translations to web_anon;",
       "grant select on word_example_sentences to web_anon;",
-      "grant select on word_korean_explanations to web_anon;"
+      "grant select on word_korean_explanations to web_anon;",
+      "revoke create on schema public, auth from web_anon;"
     ]
 
     Enum.each(queries, fn query ->
