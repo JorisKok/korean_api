@@ -2,20 +2,20 @@ defmodule KoreanApi.Repo.Migrations.CreateUsersTable do
   use Ecto.Migration
 
   def up do
-    create table(:roles, prefix: "auth") do
-      add :name, :string
-    end
-
     create table(:users, prefix: "auth") do
       add :email, :string
       add :password, :string
+    end
+
+    create table(:tokens, prefix: "auth") do
+      add :user_id, references(:users)
       add :token, :string
-      add :role_id, references(:roles)
     end
 
     create unique_index(:users, [:email], prefix: "auth")
 
     execute("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
+    execute("CREATE EXTENSION IF NOT EXISTS pgjwt;")
     execute("alter extension pgcrypto set schema auth;")
 
     execute(
@@ -54,7 +54,7 @@ defmodule KoreanApi.Repo.Migrations.CreateUsersTable do
 
   def down do
     drop table(:users, prefix: "auth")
-    drop table(:roles, prefix: "auth")
+    drop table(:tokens, prefix: "auth")
     execute("DROP FUNCTION auth.set_password;")
 
   end

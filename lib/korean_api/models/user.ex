@@ -1,14 +1,13 @@
-defmodule KoreanApi.Models.Word do
+defmodule KoreanApi.Models.User do
   @moduledoc """
   The base word
   """
   use Ecto.Schema
+  alias KoreanApi.Models.Role
 
-  schema "words" do
+  schema "auth.users" do
     field(:email, :string)
     field(:password, :string)
-    has_many(:word_translations, KoreanApi.Models.WordTranslation)
-    has_many(:word_example_sentences, KoreanApi.Models.WordExampleSentence)
-    has_many(:word_korean_explanations, KoreanApi.Models.WordKoreanExplanation)
+    belongs_to :role, Role
   end
 end
