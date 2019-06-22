@@ -2,7 +2,6 @@ defmodule KoreanApi.Repo.Migrations.CreateRegisterFunction do
   use Ecto.Migration
 
   def up do
-
     execute(
       """
       CREATE OR REPLACE FUNCTION public.register(email text, password text) RETURNS text AS $$
@@ -15,7 +14,9 @@ defmodule KoreanApi.Repo.Migrations.CreateRegisterFunction do
         raise invalid_password using message = 'email already exists';
       end if;
 
-      SELECT public.sign(row_to_json(r), '#{Application.fetch_env!(:korean_api, :jwt_secret)}') as token FROM (select 'web_user' as role, email, extract(epoch from now())::integer +60*60 as exp) r INTO result;
+      SELECT public.sign(row_to_json(r), '#{
+        Application.fetch_env!(:korean_api, :jwt_secret)
+      }') as token FROM (select 'web_user' as role, email, extract(epoch from now())::integer +60*60 as exp) r INTO result;
 
       RETURN result;
       END;

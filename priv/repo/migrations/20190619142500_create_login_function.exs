@@ -2,6 +2,7 @@ defmodule KoreanApi.Repo.Migrations.CreateLoginFunction do
   use Ecto.Migration
 
   def up do
+
     execute(
       """
       CREATE OR REPLACE FUNCTION public.login(email text, password text) RETURNS text AS $$
@@ -22,6 +23,7 @@ defmodule KoreanApi.Repo.Migrations.CreateLoginFunction do
       $$ LANGUAGE plpgsql;
       """
     )
+
 
     execute("ALTER FUNCTION public.login(text, text) SET search_path = auth")
     execute("grant execute on function public.login(text,text) to web_anon;")
