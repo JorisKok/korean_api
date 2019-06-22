@@ -16,14 +16,14 @@ defmodule KoreanApi.Repo.Migrations.CreateUsersTable do
 
     execute("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
     execute("CREATE EXTENSION IF NOT EXISTS pgjwt;")
-    execute("alter extension pgcrypto set schema auth;")
+    execute("alter extension pgcrypto set schema public;")
 
     execute(
       """
-      CREATE OR REPLACE FUNCTION set_password() RETURNS trigger AS $$
+      CREATE OR REPLACE FUNCTION auth.set_password() RETURNS trigger AS $$
       BEGIN
           IF tg_op = 'INSERT' OR tg_op = 'UPDATE' THEN
-              NEW.password = crypt(new.password, gen_salt('bf'));
+              NEW.password = public.crypt(new.password, public.gen_salt('bf'));
               RETURN NEW;
           END IF;
       END;
@@ -36,7 +36,7 @@ defmodule KoreanApi.Repo.Migrations.CreateUsersTable do
       CREATE TRIGGER user_password_insert
       BEFORE INSERT ON auth.users
       FOR EACH ROW
-      EXECUTE PROCEDURE set_password();
+      EXECUTE PROCEDURE auth.set_password();
       """
     )
 
@@ -46,9 +46,11 @@ defmodule KoreanApi.Repo.Migrations.CreateUsersTable do
       BEFORE UPDATE ON auth.users
       FOR EACH ROW
       WHEN ( NEW.password IS DISTINCT FROM OLD.password )
-      EXECUTE PROCEDURE set_password();
+      EXECUTE PROCEDURE auth.set_password();
       """
     )
+
+    execute("ALTER FUNCTION auth.set_password() SET search_path = auth;")
 
   end
 

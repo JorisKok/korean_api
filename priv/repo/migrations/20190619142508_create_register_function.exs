@@ -5,7 +5,7 @@ defmodule KoreanApi.Repo.Migrations.CreateRegisterFunction do
 
     execute(
       """
-      CREATE OR REPLACE FUNCTION auth.register(email text, password text) RETURNS text AS $$
+      CREATE OR REPLACE FUNCTION public.register(email text, password text) RETURNS text AS $$
       DECLARE
         _id integer;
         result text;
@@ -15,7 +15,7 @@ defmodule KoreanApi.Repo.Migrations.CreateRegisterFunction do
         raise invalid_password using message = 'email already exists';
       end if;
 
-      SELECT sign(row_to_json(r), '#{Application.fetch_env!(:korean_api, :jwt_secret)}') as token FROM (select email, extract(epoch from now())::integer +60*60 as exp) r INTO result;
+      SELECT public.sign(row_to_json(r), '#{Application.fetch_env!(:korean_api, :jwt_secret)}') as token FROM (select 'web_user' as role, email, extract(epoch from now())::integer +60*60 as exp) r INTO result;
 
       RETURN result;
       END;
@@ -24,7 +24,11 @@ defmodule KoreanApi.Repo.Migrations.CreateRegisterFunction do
       """
     )
 
-    execute("ALTER FUNCTION auth.register(text, text) SET search_path = auth,public;")
+    execute("ALTER FUNCTION public.register(text, text) SET search_path = auth;")
+    execute("grant execute on function public.register(text,text) to web_anon;")
+    execute("grant select on auth.users to web_anon;")
+    execute("grant insert on auth.users to web_anon;")
+    execute("GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA auth TO web_anon;")
   end
 
   def down do
