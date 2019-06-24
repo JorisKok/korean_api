@@ -8,6 +8,8 @@ defmodule KoreanApi.Repo.Migrations.CreateWordKoreanExplanationsTable do
     end
 
     execute("grant select on word_korean_explanations to web_anon;")
+
+    create index(:word_korean_explanations, [:word_id])
   end
 
   def down do

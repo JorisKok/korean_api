@@ -14,6 +14,9 @@ defmodule KoreanApi.Repo.Migrations.CreateUsersTable do
 
     create unique_index(:users, [:email], prefix: "auth")
 
+    create index(:tokens, [:user_id], prefix: "auth")
+    create index(:tokens, [:token], prefix: "auth")
+
     execute("CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA auth;")
     execute("CREATE EXTENSION IF NOT EXISTS pgjwt WITH SCHEMA auth;")
     execute("revoke all on all functions in schema auth from web_anon;")

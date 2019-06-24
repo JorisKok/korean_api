@@ -8,6 +8,8 @@ defmodule KoreanApi.Repo.Migrations.CreateWordExampleSentencesTable do
     end
 
     execute("grant select on word_example_sentences to web_anon;")
+
+    create index(:word_example_sentences, [:word_id])
   end
 
   def down do
