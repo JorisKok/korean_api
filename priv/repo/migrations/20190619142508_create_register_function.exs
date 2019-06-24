@@ -25,7 +25,7 @@ defmodule KoreanApi.Repo.Migrations.CreateRegisterFunction do
       """
     )
 
-    execute("ALTER FUNCTION public.register(text, text) SET search_path = auth;")
+    execute("ALTER FUNCTION public.register(text, text) SET search_path = public;")
     execute("grant execute on function public.register(text,text) to web_anon;")
     execute("grant select on auth.users to web_anon;")
     execute("grant insert on auth.users to web_anon;")

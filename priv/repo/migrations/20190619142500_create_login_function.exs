@@ -25,7 +25,7 @@ defmodule KoreanApi.Repo.Migrations.CreateLoginFunction do
     )
 
 
-    execute("ALTER FUNCTION public.login(text, text) SET search_path = auth")
+    execute("ALTER FUNCTION public.login(text, text) SET search_path = public")
     execute("grant execute on function public.login(text,text) to web_anon;")
   end
 
