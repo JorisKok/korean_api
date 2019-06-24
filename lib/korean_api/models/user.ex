@@ -8,6 +8,6 @@ defmodule KoreanApi.Models.User do
   schema "auth.users" do
     field(:email, :string)
     field(:password, :string)
-    belongs_to :role, Role
+    belongs_to(:role, Role)
   end
 end

@@ -10,12 +10,12 @@ defmodule KoreanApi.Repo.Migrations.CreateLoginFunction do
         result text;
         _email text;
       BEGIN
-      SELECT auth.users.email INTO _email FROM auth.users WHERE auth.users.email = $1 and auth.users.password = public.crypt($2, auth.users.password);
+      SELECT auth.users.email INTO _email FROM auth.users WHERE auth.users.email = $1 and auth.users.password = auth.crypt($2, auth.users.password);
       if _email is null then
         raise invalid_password using message = 'invalid user or password';
       end if;
 
-      SELECT public.sign(row_to_json(r), '#{Application.fetch_env!(:korean_api, :jwt_secret)}') as token FROM (select 'web_user' as role, _email, extract(epoch from now())::integer +60*60 as exp) r INTO result;
+      SELECT auth.sign(row_to_json(r), '#{Application.fetch_env!(:korean_api, :jwt_secret)}') as token FROM (select 'web_user' as role, _email, extract(epoch from now())::integer +60*60 as exp) r INTO result;
 
       RETURN result;
       END;
@@ -30,6 +30,6 @@ defmodule KoreanApi.Repo.Migrations.CreateLoginFunction do
   end
 
   def down do
-    execute("DROP FUNCTION auth.login;")
+    execute("DROP FUNCTION public.login;")
   end
 end

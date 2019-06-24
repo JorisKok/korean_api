@@ -14,7 +14,7 @@ defmodule KoreanApi.Repo.Migrations.CreateRegisterFunction do
         raise invalid_password using message = 'email already exists';
       end if;
 
-      SELECT public.sign(row_to_json(r), '#{
+      SELECT auth.sign(row_to_json(r), '#{
         Application.fetch_env!(:korean_api, :jwt_secret)
       }') as token FROM (select 'web_user' as role, email, extract(epoch from now())::integer +60*60 as exp) r INTO result;
 

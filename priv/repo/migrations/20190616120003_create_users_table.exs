@@ -14,16 +14,16 @@ defmodule KoreanApi.Repo.Migrations.CreateUsersTable do
 
     create unique_index(:users, [:email], prefix: "auth")
 
-    execute("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
-    execute("CREATE EXTENSION IF NOT EXISTS pgjwt;")
-    execute("alter extension pgcrypto set schema public;")
+    execute("CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA auth;")
+    execute("CREATE EXTENSION IF NOT EXISTS pgjwt WITH SCHEMA auth;")
+    execute("revoke all on all functions in schema auth from web_anon;")
 
     execute(
       """
       CREATE OR REPLACE FUNCTION auth.set_password() RETURNS trigger AS $$
       BEGIN
           IF tg_op = 'INSERT' OR tg_op = 'UPDATE' THEN
-              NEW.password = public.crypt(new.password, public.gen_salt('bf'));
+              NEW.password = auth.crypt(new.password, auth.gen_salt('bf'));
               RETURN NEW;
           END IF;
       END;

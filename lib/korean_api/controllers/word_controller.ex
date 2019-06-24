@@ -57,7 +57,8 @@ defmodule KoreanApi.Controllers.WordController do
     end
   end
 
-  defp get_from_krdict_by_analysed(korean, word, other_parameters) when is_list(other_parameters) do
+  defp get_from_krdict_by_analysed(korean, word, other_parameters)
+       when is_list(other_parameters) do
     with {:ok, _} <- KoreanDictionaryService.korean_to_english(korean, word),
          :ok <- KoreanDictionaryService.korean_to_korean(korean, word),
          :ok <- KoreanDictionaryService.korean_example_sentences(korean, word) do
@@ -68,13 +69,16 @@ defmodule KoreanApi.Controllers.WordController do
 
   defp get_from_analysed(korean, other_parameters) when is_list(other_parameters) do
     stem = KoreanSentenceAnalyser.get_the_stem_of_a_word(korean)
+
     case get_from_database(stem, other_parameters) do
       :not_found ->
         # Save based on the searched value, so that it's fast to receive the next time
         {:ok, word} = Repo.insert(%Word{korean: stem})
 
         get_from_krdict_by_analysed(stem, word, other_parameters)
-      result -> result
+
+      result ->
+        result
     end
   end
 end
