@@ -12,23 +12,25 @@ defmodule KoreanApi.Services.KoreanDictionaryService do
   Store the translations and the word if found
   Returns :ok if found and stored
   """
-  def korean_to_english(korean, word \\ nil) do
+  def korean_to_english(korean, original_word \\ nil) do
     case KoreanDictionary.korean_to_english(korean) do
       [] ->
         :not_found
 
       result ->
         word =
-          case word do
+          case original_word do
             nil ->
-              # Insert the word only when we found a translation
+              # Insert the search word
               {:ok, word} = Repo.insert(%Word{korean: korean})
               word
 
-            word ->
+            original_word ->
+              # Store by the original search word (before elasticsearch transformation)
+              {:ok, word} = Repo.insert(%Word{korean: original_word})
               word
           end
-          
+
         Enum.each(
           result,
 
