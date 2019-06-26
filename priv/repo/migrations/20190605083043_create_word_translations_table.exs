@@ -4,8 +4,10 @@ defmodule KoreanApi.Repo.Migrations.CreateWordTranslationsTable do
   def up do
     create table(:word_translations) do
       add :word_id, references(:words)
-      add :translation, :string
-      add :definition, :string
+      # The related korean words is a word that might contain the original word (한국말 for 한국)
+      add :related_korean_word, :string
+      add :translation, :text
+      add :definition, :text
     end
 
     execute("grant select on word_translations to web_anon;")

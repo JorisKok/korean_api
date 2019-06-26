@@ -4,7 +4,7 @@ defmodule KoreanApi.Repo.Migrations.CreateWordKoreanExplanationsTable do
   def up do
     create table(:word_korean_explanations) do
       add :word_id, references(:words)
-      add :korean_explanation, :string
+      add :korean_explanation, :text
     end
 
     execute("grant select on word_korean_explanations to web_anon;")

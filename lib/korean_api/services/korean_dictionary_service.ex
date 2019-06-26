@@ -28,15 +28,23 @@ defmodule KoreanApi.Services.KoreanDictionaryService do
             word ->
               word
           end
-
+          
         Enum.each(
           result,
-          fn {translation, definition} ->
-            Repo.insert!(%WordTranslation{
-              word_id: word.id,
-              translation: translation,
-              definition: definition
-            })
+
+          # The related korean words is a word that might contain the original word (한국말 for 한국)
+          fn %{word: related_korean_word, translations: translations} ->
+            Enum.each(
+              translations,
+              fn {translation, definition} ->
+                Repo.insert!(%WordTranslation{
+                  word_id: word.id,
+                  related_korean_word: related_korean_word,
+                  translation: translation,
+                  definition: definition
+                })
+              end
+            )
           end
         )
 

@@ -28,9 +28,8 @@ defmodule KoreanApi.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:reverse_proxy_plug, "~> 1.1.1"},
       {:httpoison, "~> 1.4"},
-      {:korean_dictionary, "~> 0.1.2"},
+      {:korean_dictionary, "~> 0.1.3"},
       {:korean_sentence_analyser, "~> 0.1.1"},
-      {:guardian, "~> 1.0"},
       # Dev only
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false}

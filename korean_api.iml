@@ -61,5 +61,6 @@
     <orderEntry type="library" name="libdecaf" level="project" />
     <orderEntry type="library" name="libsodium" level="project" />
     <orderEntry type="library" name="ojson" level="project" />
+    <orderEntry type="library" name="dotenv" level="project" />
   </component>
 </module>
