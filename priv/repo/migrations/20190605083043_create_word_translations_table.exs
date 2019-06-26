@@ -6,7 +6,7 @@ defmodule KoreanApi.Repo.Migrations.CreateWordTranslationsTable do
       add :word_id, references(:words)
       # The related korean words is a word that might contain the original word (한국말 for 한국)
       add :related_korean_word, :string
-      add :translation, :text
+      add :translation, :text, default: "(no equivalent expression)"
       add :definition, :text
     end
 
