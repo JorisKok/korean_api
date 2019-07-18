@@ -3,13 +3,6 @@ defmodule KoreanApi.Endpoint do
 
   plug(:match)
 
-  plug(
-    Plug.Parsers,
-    parsers: [:json],
-    pass: ["application/json"],
-    json_decoder: Poison
-  )
-
   plug(:dispatch)
 
   get "/ping" do
@@ -29,10 +22,12 @@ defmodule KoreanApi.Endpoint do
   get "/words" do
     conn
     |> put_resp_content_type("application/openapi+json")
-    |> send_resp(200, KoreanApi.Controllers.WordController.get(conn.query_string))
+    |> send_resp(
+      200,
+      KoreanApi.Controllers.WordController.get(conn.query_string)
+    )
   end
 
   # Forward everything to PostgREST
-  # TODO get url from config
   forward("/", to: ReverseProxyPlug, upstream: Application.fetch_env!(:korean_api, :postgrest_url))
 end
