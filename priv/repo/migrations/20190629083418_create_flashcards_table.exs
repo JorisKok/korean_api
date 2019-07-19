@@ -8,7 +8,7 @@ defmodule KoreanApi.Repo.Migrations.CreateFlashcardsTable do
       add :token, :string, null: false
     end
     
-    execute("grant select, insert on flashcards to web_anon;")
+    execute("grant select, insert, delete on flashcards to web_anon;")
     execute("grant usage, select on all sequences in schema public to web_anon;")
     
     create index(:flashcards, [:token])
