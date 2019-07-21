@@ -4,7 +4,7 @@ defmodule KoreanApi.Repo.Migrations.CreateWordKoreanExplanationsTable do
 
   def up do
     create table(:word_korean_explanations) do
-      add :word_id, references(:words), null: false
+      add :word_id, references(:words), null: false, on_delete: :delete_all
       add :korean_explanation, :text
     end
 

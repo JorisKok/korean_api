@@ -4,7 +4,7 @@ defmodule KoreanApi.Repo.Migrations.CreateFlashcardsTable do
   
   def up do
     create table(:flashcards) do
-      add :word_id, references(:words), null: false
+      add :word_id, references(:words), null: false, on_delete: :delete_all
       add :token, :string, null: false
     end
     
