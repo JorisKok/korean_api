@@ -52,9 +52,14 @@ defmodule KoreanApi.Controllers.WordController do
   end
   
   defp get_from_krdict(korean, other_parameters) when is_list(other_parameters) do
-    with {:ok, word} <- KoreanDictionaryService.korean_to_english(korean),
-         :ok <- KoreanDictionaryService.korean_to_korean(korean, word),
-         :ok <- KoreanDictionaryService.korean_example_sentences(korean, word) do
+    # Call the KRDict async
+    task_korean_to_english = Task.async(fn -> KoreanDictionary.korean_to_english(korean) end)
+    task_korean_to_korean = Task.async(fn -> KoreanDictionary.korean_to_korean(korean) end)
+    task_korean_example_sentences = Task.async(fn -> KoreanDictionary.korean_example_sentences(korean) end)
+    
+    with {:ok, word} <- KoreanDictionaryService.korean_to_english(korean, Task.await(task_korean_to_english, 50_000)),
+         :ok <- KoreanDictionaryService.korean_to_korean(korean, word, Task.await(task_korean_to_korean, 50_000)),
+         :ok <- KoreanDictionaryService.korean_example_sentences(korean, word, Task.await(task_korean_example_sentences, 50_000)) do
       # Get it from the database, so we can use the PostgREST queries
       get_from_database(korean, other_parameters)
     end
@@ -62,9 +67,15 @@ defmodule KoreanApi.Controllers.WordController do
   
   defp get_from_krdict_by_analysed(stem, korean, other_parameters)
        when is_list(other_parameters) do
-    with {:ok, word} <- KoreanDictionaryService.korean_to_english(stem, korean),
-         :ok <- KoreanDictionaryService.korean_to_korean(stem, word),
-         :ok <- KoreanDictionaryService.korean_example_sentences(stem, word) do
+  
+    # Call the KRDict async
+    task_korean_to_english = Task.async(fn -> KoreanDictionary.korean_to_english(korean) end)
+    task_korean_to_korean = Task.async(fn -> KoreanDictionary.korean_to_korean(korean) end)
+    task_korean_example_sentences = Task.async(fn -> KoreanDictionary.korean_example_sentences(korean) end)
+    
+    with {:ok, word} <- KoreanDictionaryService.korean_to_english(stem, korean, Task.await(task_korean_to_english, 50_000)),
+         :ok <- KoreanDictionaryService.korean_to_korean(stem, word, Task.await(task_korean_to_korean, 50_000)),
+         :ok <- KoreanDictionaryService.korean_example_sentences(stem, word, Task.await(task_korean_example_sentences, 50_000)) do
       # Get it from the database, so we can use the PostgREST queries
       get_from_database(korean, other_parameters)
     end
@@ -79,16 +90,18 @@ defmodule KoreanApi.Controllers.WordController do
   defp get_missing_translations([translation]) do
     korean = Map.get(translation, "korean")
     word = WordRepo.get_by_korean!(korean)
+    
     if (Map.get(translation, "word_translations") == []) do
-      KoreanDictionaryService.korean_to_english(word)
-    end
-
-    if (Map.get(translation, "word_example_sentences") == []) do
-      KoreanDictionaryService.korean_example_sentences(korean, word)
+      KoreanDictionaryService.korean_to_english(word, KoreanDictionary.korean_to_english(korean))
     end
 
     if (Map.get(translation, "word_korean_explanations") == []) do
-      KoreanDictionaryService.korean_to_korean(korean, word)
+      KoreanDictionaryService.korean_to_korean(korean, word, KoreanDictionary.korean_to_korean(korean))
     end
+    
+    if (Map.get(translation, "word_example_sentences") == []) do
+      KoreanDictionaryService.korean_example_sentences(korean, word, KoreanDictionary.korean_example_sentences(korean))
+    end
+
   end
 end
