@@ -5,7 +5,7 @@ defmodule KoreanApi.MixProject do
     [
       app: :korean_api,
       version: "0.1.0",
-      elixir: "~> 1.9-rc",
+      elixir: "~> 1.9.1",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -28,8 +28,9 @@ defmodule KoreanApi.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:reverse_proxy_plug, "~> 1.1.1"},
       {:httpoison, "~> 1.4"},
-      {:korean_dictionary, "~> 0.1.3"},
+      {:korean_dictionary, "~> 0.1.4"},
       {:korean_sentence_analyser, "~> 0.1.1"},
+      {:exml, "~> 0.1.1"},
       {:jason, "~> 1.1"},
       # Dev only
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
