@@ -4,7 +4,7 @@ defmodule KoreanApi.Repo.Migrations.CreateWordExampleSentencesTable do
   
   def up do
     create table(:word_example_sentences) do
-      add :word_id, references(:words), null: false, on_delete: :delete_all
+      add :word_id, references(:words, on_delete: :delete_all), null: false
       add :example_sentence, :text
     end
 

@@ -4,7 +4,7 @@ defmodule KoreanApi.Repo.Migrations.CreateFlashcardsTable do
   
   def up do
     create table(:flashcards) do
-      add :word_id, references(:words), null: false, on_delete: :delete_all
+      add :word_id, references(:words, on_delete: :delete_all), null: false
       add :token, :string, null: false
     end
     
@@ -13,7 +13,8 @@ defmodule KoreanApi.Repo.Migrations.CreateFlashcardsTable do
     
     create index(:flashcards, [:token])
     
-    execute("
+    execute(
+      "
     CREATE OR REPLACE FUNCTION trigger_delete_after_a_week()
     RETURNS TRIGGER AS $$
     BEGIN
@@ -21,8 +22,9 @@ defmodule KoreanApi.Repo.Migrations.CreateFlashcardsTable do
       RETURN NEW;
     END;
     $$ LANGUAGE plpgsql;
-    ")
-
+    "
+    )
+    
     add_timestamps("flashcards")
   end
   
