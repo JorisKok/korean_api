@@ -4,26 +4,25 @@ defmodule KoreanApi.Repo.Migrations.CreateLearnTable do
   
   def up do
     create table(:learn) do
-      add :level, :string
-      add :topic, :string
+      add :level, :string, null: false
+      add :topic, :string, null: false
       add :type, :string, null: false
       add :korean, :string, null: false
       add :translation, :string, null: false
       add :notes, {:array, :string}
-      add :user_id, :integer, null: false # Reference via execute()
+      add :email, :string, null: false
       add :difficulty, :integer, null: false
     end
     
-    execute "alter table learn
-            add constraint learn_user_id_fkey foreign key (user_id)
-            references auth.users (id)
-            match simple on update no action on delete cascade"
-    create index(:learn, [:level, :topic, :user_id])
+    create index(:learn, [:level, :topic, :email])
     
-    execute("grant select, insert, delete on learn to web_anon;")
-    execute("grant usage, select on all sequences in schema public to web_anon;")
-    
-    # TODO add security to only allow changing own user_id items
+    execute("grant select, insert, delete on learn to web_user;")
+    execute("grant usage, select on all sequences in schema public to web_user;")
+
+    execute "CREATE TRIGGER learn_before_trigger
+            BEFORE INSERT ON learn
+            FOR EACH ROW
+            EXECUTE PROCEDURE public.set_email()"
     
     add_timestamps("learn")
   end
