@@ -4,13 +4,13 @@ defmodule KoreanApi.Repo.Migrations.CreateSetEmailFunction do
   def up do
   
     execute ("
-      CREATE OR REPLACE FUNCTION public.get_email(jwt text)
+      CREATE OR REPLACE FUNCTION public.get_email()
       RETURNS text AS
       $$
       DECLARE
         email text;
       BEGIN
-      RETURN select payload::json->'email' as email from auth.verify(jwt', '#{Application.fetch_env!(:korean_api, :jwt_secret)}') where valid is true;
+        RETURN current_setting('request.jwt.claim.email', true);
       END
       $$ LANGUAGE 'plpgsql'
     ")
@@ -20,7 +20,7 @@ defmodule KoreanApi.Repo.Migrations.CreateSetEmailFunction do
       RETURNS trigger AS
       $$
       BEGIN
-      NEW.email = public.get_email(NEW.email);
+      NEW.email = public.get_email();
       RETURN NEW;
       END
       $$ LANGUAGE 'plpgsql'
@@ -33,7 +33,8 @@ defmodule KoreanApi.Repo.Migrations.CreateSetEmailFunction do
   end
   
   def down do
-    execute("DROP FUNCTION public.set_user;")
+    execute("DROP FUNCTION public.set_email();")
+    execute("DROP FUNCTION public.get_email();")
   
   end
 end
