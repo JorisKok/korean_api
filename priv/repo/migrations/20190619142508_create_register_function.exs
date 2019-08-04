@@ -16,7 +16,7 @@ defmodule KoreanApi.Repo.Migrations.CreateRegisterFunction do
 
       SELECT auth.sign(row_to_json(r), '#{
         Application.fetch_env!(:korean_api, :jwt_secret)
-      }') as token FROM (select 'web_user' as role, email as email, extract(epoch from now())::integer +60*60 as exp) r INTO result;
+      }') as token FROM (select 'web_user' as role, email as email, extract(epoch from now())::integer +60*60*24*31 as exp) r INTO result;
 
       RETURN result;
       END;

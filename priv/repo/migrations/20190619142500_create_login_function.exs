@@ -15,7 +15,7 @@ defmodule KoreanApi.Repo.Migrations.CreateLoginFunction do
         raise invalid_password using message = 'invalid user or password';
       end if;
 
-      SELECT auth.sign(row_to_json(r), '#{Application.fetch_env!(:korean_api, :jwt_secret)}') as token FROM (select 'web_user' as role, _email as email, extract(epoch from now())::integer +60*60 as exp) r INTO result;
+      SELECT auth.sign(row_to_json(r), '#{Application.fetch_env!(:korean_api, :jwt_secret)}') as token FROM (select 'web_user' as role, _email as email, extract(epoch from now())::integer +60*60*24*31 as exp) r INTO result;
 
       RETURN result;
       END;
