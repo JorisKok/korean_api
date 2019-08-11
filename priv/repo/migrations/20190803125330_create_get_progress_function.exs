@@ -8,7 +8,7 @@ defmodule KoreanApi.Repo.Migrations.CreateGetProgressFunction do
       DECLARE
         progress INT;
       BEGIN
-        SELECT ((COUNT(*) * 10) - SUM(difficulty)) / ((COUNT(*) * 10) / 100) as progress
+        SELECT ((COUNT(*) * 10) - SUM(difficulty)) / GREATEST(1, ((COUNT(*) * 10) / 100)) as progress
         FROM learn
         WHERE  level = _level
         AND topic = _topic
