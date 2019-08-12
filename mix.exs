@@ -29,7 +29,7 @@ defmodule KoreanApi.MixProject do
       {:reverse_proxy_plug, "~> 1.1.1"},
       {:httpoison, "~> 1.4"},
       {:korean_dictionary, "~> 0.1.4"},
-      {:korean_sentence_analyser, "~> 0.1.1"},
+      {:korean_sentence_analyser, "~> 0.1.4"},
       {:exml, "~> 0.1.1"},
       {:jason, "~> 1.1"},
       # Dev only
