@@ -12,7 +12,7 @@ defmodule KoreanApi.Controllers.WordController do
   """
   def get("korean=eq." <> parameters) do
     parameters = String.split(parameters, "&")
-    word = URI.decode(hd(parameters))
+    word = String.trim(URI.decode(hd(parameters)))
     # We need to pass these along to get access to selects, filters etc
     other_parameters = tl(parameters)
     
