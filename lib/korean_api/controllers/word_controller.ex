@@ -20,7 +20,7 @@ defmodule KoreanApi.Controllers.WordController do
     word = hd(parameters)
            |> URI.decode()
            |> String.trim()
-           |> Strim.split(" ")
+           |> String.split(" ")
            |> List.first()
            |> KoreanSentenceAnalyser.get_the_stem_of_a_word()
     
