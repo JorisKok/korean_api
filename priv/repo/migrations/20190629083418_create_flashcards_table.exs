@@ -12,6 +12,7 @@ defmodule KoreanApi.Repo.Migrations.CreateFlashcardsTable do
     execute("grant usage, select on all sequences in schema public to web_anon;")
     
     create index(:flashcards, [:token])
+    create unique_index(:flashcards, [:word_id, :token])
     
     execute(
       "

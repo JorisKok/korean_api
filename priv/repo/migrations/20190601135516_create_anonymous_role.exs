@@ -4,6 +4,8 @@ defmodule KoreanApi.Repo.Migrations.CreateAnonymousRole do
   def change do
     execute("create schema auth;")
     execute("drop role if exists web_anon;")
+    execute("drop role if exists web_user;")
+    execute("drop role if exists authenticator;")
     execute("create role web_anon nologin;")
     execute("create role web_user nologin;")
     execute("create role authenticator noinherit login password '#{Application.fetch_env!(:korean_api, :authenticator_secret)}';")
