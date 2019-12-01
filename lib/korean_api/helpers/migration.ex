@@ -1,6 +1,6 @@
 defmodule KoreanApi.Helpers.Migration do
   use Ecto.Migration
-  
+
   @moduledoc """
   Postgres migration helpers
   """

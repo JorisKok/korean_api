@@ -14,7 +14,7 @@ defmodule Mix.Tasks.ClearTranslations do
 
     queries = [
       "truncate flashcards;",
-      "truncate words cascade;",
+      "truncate words cascade;"
     ]
 
     Enum.each(queries, fn query ->
